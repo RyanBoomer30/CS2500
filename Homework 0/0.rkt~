@@ -1,0 +1,72 @@
+;; The first three lines of this file were inserted by DrRacket. They record metadata
+;; about the language level of this file in a form that our tools can easily process.
+#reader(lib "htdp-beginner-abbr-reader.ss" "lang")((modname |0|) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+(require racket/dict)
+(require racket/format)
+
+#| String Processing |#
+;; concat-longer-first: String 1, String 2 -> Concatenated String
+;; Given two strings, concatenate them into one string as long as the longer is in the front
+
+(define (concat-longer-first string1 string2)
+  (cond
+    [ (< (string-length string1) (string-length string2)) (string-append string2 " " string1)]
+    [else (string-append string1 " " string2)]
+    )
+  )
+
+(check-expect (concat-longer-first "hello" "there") "hello there")
+(check-expect (concat-longer-first "hi" "there") "there hi")
+(check-expect (concat-longer-first "hello" "mom") "hello mom")
+
+#| The Canadian |#
+;; CanadianTrainStop is a data definition that defines any of the stops in VIA Rail Canadian
+(define CanadianTrainStop "Vancouver") ;; "Vancouver" can be swapped with any other stops name
+
+;; province is a function that take in the name of a stop and output its province in Canada
+;; province: StopName (string) -> ProvinceName (string)
+(define (province StopName)
+  (cond
+    [(or (string=? StopName "Vancouver") (string=? StopName "Kamloops")) "British Columbia"]
+    [(or (string=? StopName "Jasper") (string=? StopName "Edmonton")) "Alberta"]
+    [(string=? StopName "Saskatoon") "Saskatchewan"]
+    [(string=? StopName "Winnipeg") "Manitoba"]
+    [(or (string=? StopName "Sioux Lookout") (string=? StopName "Sudbury Jct.")
+         (string=? StopName "Toronto")) "Ontario"]
+    [else "Not a valid stop"]
+    )
+  )
+(check-expect (province CanadianTrainStop) "British Columbia")
+
+;; can-transfer? is a function that take in the name of a stop and output whether or not it has a transfer line
+;; can-transfer?: StopName (string) -> Boolean
+(define (can-transfer? StopName)
+  (cond
+    [(or (string=? StopName "Jasper") (string=? StopName "Winnipeg") (string=? StopName "Toronto")) #true]
+    [else #false])
+  )
+
+(check-expect (can-transfer? CanadianTrainStop) #false)
+
+#| Compass |#
+;; CompassDirection is a data definition that represents a single cardinal or inter-cardinal direction
+(define CompassDirection "North") ;; "North" can be replaced with any direction
+
+;; cardinal? is a function that determines if a CompassDirection is a cardinal direction
+;; cardinal?: Direction(string) -> Boolean
+(define (cardinal? Direction)
+  (cond
+    [(or (string=? Direction "North") (string=? Direction "South")
+         (string=? Direction "East") (string=? Direction "West")) #true]
+    [else #false]
+    )
+  )
+
+(check-expect (cardinal? CompassDirection) #true)
+
+#| Rotten Tomatoes |#
+;; Movie is a data definition that represents three informations
+;;about a movie (name, Tomatometer, MPAA rating)
+(define Movie (list "Titanic" 87 13)) ;; The elements in the list can be changed with any movies' rottentomatoes info
+
+;; can-and-will-watch? is a function that determines whether or not a Movie is age-appropriate

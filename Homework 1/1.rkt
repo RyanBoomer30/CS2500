@@ -1,0 +1,488 @@
+;; The first three lines of this file were inserted by DrRacket. They record metadata
+;; about the language level of this file in a form that our tools can easily process.
+#reader(lib "htdp-intermediate-reader.ss" "lang")((modname |1|) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+;;Alp Berrak and Ryan Tran
+
+(require 2htdp/image)
+(require 2htdp/universe)
+
+
+
+
+;; Define the size and color of typing words and recorded words
+(define wordSize 50)
+(define wordColor "red")
+(define recordedWordsSize 20)
+(define recordedWordColor "blue")
+
+
+;; A (Letters distinguishedName secondName thirdName fourthName
+;; fifthName sixthName seventhName) represents a first distinguished letter and
+;; all the other available letters
+(define-struct Letter [distinguishedName 
+                       secondName 
+                       thirdName 
+                       fourthName 
+                       fifthName 
+                       sixthName 
+                       seventhName ])
+
+;; Template
+;; letter-template : Letter -> ?
+(define (letter-template s)
+  (...(Letter-distinguishedName) ...
+      (Letter-secondName) ...
+      (Letter-thirdName) ...
+      (Letter-fourthName) ...
+      (Letter-fifthName) ...
+      (Letter-sixthName) ...
+      (Letter-seventhName) ...
+      )
+  )
+
+;; creates GameLetter Structure
+(define GameLetter (make-Letter "C" "E" "T" "J" "I" "O" "N"))
+
+;; letters->image : Letter -> Image
+;; Convert each game letter into an image
+(define (letters->image GameLetter)
+  (above
+   (beside
+    (overlay
+     (text (Letter-secondName GameLetter) 50 "red")
+     (square 50 "solid" "dark gray"))
+    (rectangle 10 50 "solid" (make-color 0 0 0 0))
+           (overlay(text (Letter-thirdName GameLetter) 50 "red") (square 50 "solid" "dark gray"))
+           (rectangle 10 50 "solid" (make-color 0 0 0 0))
+           (overlay(text (Letter-fourthName GameLetter) 50 "red") (square 50 "solid" "dark gray"))
+           (rectangle 10 50 "solid" (make-color 0 0 0 0))
+           (overlay(text (Letter-fifthName GameLetter) 50 "red") (square 50 "solid" "dark gray"))
+           (rectangle 10 50 "solid" (make-color 0 0 0 0))
+           (overlay(text (Letter-sixthName GameLetter) 50 "red") (square 50 "solid" "dark gray"))
+           (rectangle 10 50 "solid" (make-color 0 0 0 0))
+           (overlay(text (Letter-seventhName GameLetter) 50 "red") (square 50 "solid" "dark gray"))
+           )
+   (rectangle 50 10 "solid" (make-color 0 0 0 0))
+   (overlay(text (Letter-distinguishedName GameLetter) 50 "red") (square 50 "solid" "yellow"))
+   )
+  )
+
+;; Check-expect
+(check-expect (letters->image (make-Letter "C" "E" "T" "J" "I" "O" "N"))
+(above
+   (beside
+    (overlay
+     (text "E" 50 "red")
+     (square 50 "solid" "dark gray"))
+    (rectangle 10 50 "solid" (make-color 0 0 0 0))
+           (overlay(text "T" 50 "red") (square 50 "solid" "dark gray"))
+           (rectangle 10 50 "solid" (make-color 0 0 0 0))
+           (overlay(text "J" 50 "red") (square 50 "solid" "dark gray"))
+           (rectangle 10 50 "solid" (make-color 0 0 0 0))
+           (overlay(text "I" 50 "red") (square 50 "solid" "dark gray"))
+           (rectangle 10 50 "solid" (make-color 0 0 0 0))
+           (overlay(text "O" 50 "red") (square 50 "solid" "dark gray"))
+           (rectangle 10 50 "solid" (make-color 0 0 0 0))
+           (overlay(text "N" 50 "red") (square 50 "solid" "dark gray"))
+           )
+   (rectangle 50 10 "solid" (make-color 0 0 0 0))
+   (overlay(text "C" 50 "red") (square 50 "solid" "yellow"))
+   ))
+
+(check-expect (letters->image (make-Letter "A" "S" "F" "G" "H" "J" "K"))
+(above
+   (beside
+    (overlay
+     (text "S" 50 "red")
+     (square 50 "solid" "dark gray"))
+    (rectangle 10 50 "solid" (make-color 0 0 0 0))
+           (overlay(text "F" 50 "red") (square 50 "solid" "dark gray"))
+           (rectangle 10 50 "solid" (make-color 0 0 0 0))
+           (overlay(text "G" 50 "red") (square 50 "solid" "dark gray"))
+           (rectangle 10 50 "solid" (make-color 0 0 0 0))
+           (overlay(text "H" 50 "red") (square 50 "solid" "dark gray"))
+           (rectangle 10 50 "solid" (make-color 0 0 0 0))
+           (overlay(text "J" 50 "red") (square 50 "solid" "dark gray"))
+           (rectangle 10 50 "solid" (make-color 0 0 0 0))
+           (overlay(text "K" 50 "red") (square 50 "solid" "dark gray"))
+           )
+   (rectangle 50 10 "solid" (make-color 0 0 0 0))
+   (overlay(text "A" 50 "red") (square 50 "solid" "yellow"))
+   ))
+
+(check-expect (letters->image (make-Letter "Q" "W" "E" "R" "T" "Y" "U"))
+(above
+   (beside
+    (overlay
+     (text "W" 50 "red")
+     (square 50 "solid" "dark gray"))
+    (rectangle 10 50 "solid" (make-color 0 0 0 0))
+           (overlay(text "E" 50 "red") (square 50 "solid" "dark gray"))
+           (rectangle 10 50 "solid" (make-color 0 0 0 0))
+           (overlay(text "R" 50 "red") (square 50 "solid" "dark gray"))
+           (rectangle 10 50 "solid" (make-color 0 0 0 0))
+           (overlay(text "T" 50 "red") (square 50 "solid" "dark gray"))
+           (rectangle 10 50 "solid" (make-color 0 0 0 0))
+           (overlay(text "Y" 50 "red") (square 50 "solid" "dark gray"))
+           (rectangle 10 50 "solid" (make-color 0 0 0 0))
+           (overlay(text "U" 50 "red") (square 50 "solid" "dark gray"))
+           )
+   (rectangle 50 10 "solid" (make-color 0 0 0 0))
+   (overlay(text "Q" 50 "red") (square 50 "solid" "yellow"))
+   ))
+
+;; World : letters -> string
+;;        empty list
+;; Creates the structure for world with 7 available letters and two empty list for recording the word being typed
+;; and the words that have been typed
+(define-struct World [firstLetter
+                      secondLetter
+                      thirdLetter
+                      fourthLetter
+                      fifthLetter
+                      sixthLetter
+                      seventhLetter
+                      typedLetter
+                      recordedLetter])
+
+;; Template
+;; worldTemplate : World -> ?
+(define (worldTemplate s)
+  (...(World-firstLetter) ...
+      (World-secondLetter) ...
+      (World-thirdLetter) ...
+      (World-fourthLetter) ...
+      (World-fifthLetter) ...
+      (World-sixthLetter) ...
+      (World-seventhLetter) ...
+      (World-typedLetter) ...
+      (World-recordedLetter) ...
+      )
+  )
+
+(define world1 (make-World "A" "B" "C" "D" "E" "F" "G" (list "C") (list "placeholder")))
+(define world2 (make-World "H" "I" "J" "K" "L" "M" "N" (list '()) (list '())))
+
+;; displayedList : available letters -> strings
+;; initial empty list
+;; creates the structure that stores all valid inputs
+;; stores the partial word while it is being entered by the player
+(define displayedList (make-World
+                       (Letter-distinguishedName GameLetter)
+                       (Letter-secondName GameLetter)
+                       (Letter-thirdName GameLetter)
+                       (Letter-fourthName GameLetter)
+                       (Letter-fifthName GameLetter)
+                       (Letter-sixthName GameLetter)
+                       (Letter-seventhName GameLetter)
+                       (list '())
+                       (list '())
+                       ))
+
+;; traverse-world : world -> struct
+;; Helper function that traverse "typedLetter" in the World Structure
+(define (traverse-world world)
+  (make-World
+   (World-firstLetter world)
+   (World-secondLetter world)
+   (World-thirdLetter world)
+   (World-fourthLetter world)
+   (World-fifthLetter world)
+   (World-sixthLetter world)
+   (World-seventhLetter world)
+   (rest (World-typedLetter world))
+   (World-recordedLetter world)
+   ))
+
+;; traverse-recordedWorld : world -> struct
+;; Helper function that traverse "recordedLetter" in the World Structure
+(define (traverse-recordedWorld world)
+  (make-World
+   (World-firstLetter world)
+   (World-secondLetter world)
+   (World-thirdLetter world)
+   (World-fourthLetter world)
+   (World-fifthLetter world)
+   (World-sixthLetter world)
+   (World-seventhLetter world)
+   (World-typedLetter world)
+   (rest (World-recordedLetter world))
+   ))
+
+;; change-world : world -> struct     list -> list
+;; Helper function that return a new World structure "typedLetter" as the new list
+(define (change-world world list)
+  (make-World
+   (World-firstLetter world)
+   (World-secondLetter world)
+   (World-thirdLetter world)
+   (World-fourthLetter world)
+   (World-fifthLetter world)
+   (World-sixthLetter world)
+   (World-seventhLetter world)
+   list
+   (World-recordedLetter world)
+   ))
+
+;; record-world : World -> struct     list -> list
+;; Helper function that return a new World with new "typedLetter" and "recordedLetter"
+(define (record-world world list recordedList)
+  (make-World
+   (World-firstLetter world)
+   (World-secondLetter world)
+   (World-thirdLetter world)
+   (World-fourthLetter world)
+   (World-fifthLetter world)
+   (World-sixthLetter world)
+   (World-seventhLetter world)
+   list
+   recordedList
+   ))
+
+;; lst->string : list -> string   
+;; Helper function that takes a list and using recursion, appends each index as a string
+(define (lst->string list)
+  (cond
+    ((empty? list) "")
+    ((empty? (rest list)) (first list))
+    ((empty? (first list)) (string-append "" (lst->string (rest list))))
+    (else (string-append (first list) (lst->string (rest list))))))
+
+;; Check-expect
+(check-expect (lst->string (list "a" "b" "c")) "abc")
+(check-expect (lst->string (list "Hello" "There" "People")) "HelloTherePeople")
+(check-expect (lst->string (list "This" "list" "append")) "Thislistappend")
+
+
+;; world-print : x (world structure) -> image
+;; Helper function that creates the available letters and recorded words of the play screen
+(define (world-print x)
+  (overlay/align/offset
+   "center" "top"
+   (letters->image GameLetter)
+   0 -40
+   (overlay/align/offset
+    "center" "middle"
+    (recordedList->image (World-recordedLetter x))
+    0 0  ;;; offset values 
+    (rectangle 1500 (+ 1000 (* recordedWordsSize (length (World-recordedLetter x)))) "solid" "gray")
+    )
+   )
+  )
+
+;; Check-expect
+(check-expect (world-print displayedList) (overlay/align/offset
+   "center" "top"
+   (letters->image GameLetter)
+   0 -40
+   (overlay/align/offset
+    "center" "middle"
+    (recordedList->image (World-recordedLetter displayedList))
+    0 0  ;;; offset values 
+    (rectangle 1500 (+ 1000 (* recordedWordsSize (length (World-recordedLetter displayedList)))) "solid" "gray")
+    )
+   ))
+
+(check-expect (world-print world1) (overlay/align/offset
+   "center" "top"
+   (letters->image GameLetter)
+   0 -40
+   (overlay/align/offset
+    "center" "middle"
+    (recordedList->image (list "placeholder"))
+    0 0  ;;; offset values 
+    (rectangle 1500 (+ 1000 (* recordedWordsSize 1)) "solid" "gray")
+    )
+   ))
+
+(check-expect (world-print world2) (overlay/align/offset
+   "center" "top"
+   (letters->image GameLetter)
+   0 -40
+   (overlay/align/offset
+    "center" "middle"
+    (recordedList->image (list '()))
+    0 0  ;;; offset values 
+    (rectangle 1500 (+ 1000 (* recordedWordsSize 1)) "solid" "gray")
+    )
+   ))
+
+;; recordedList->image : list -> image
+;; Helper function that convert all the words that has been typed into an image
+(define (recordedList->image lst)
+  (cond
+    [(empty? lst) (text " " wordSize wordColor)]
+    [else
+     (overlay/align/offset
+      "center" "bottom"
+      (if
+       (empty? (first lst))
+       (text " " recordedWordsSize recordedWordColor)
+       (text (first lst) recordedWordsSize recordedWordColor))
+      0 (- 0 recordedWordsSize)
+      (recordedList->image (rest lst))
+      )
+     ]
+    )
+  )
+
+;; Check-expect
+(check-expect (recordedList->image (World-recordedLetter displayedList))
+    (cond
+    [(empty? (World-recordedLetter displayedList)) (text " " wordSize wordColor)]
+    [else
+     (overlay/align/offset
+      "center" "bottom"
+      (if
+       (empty? (first (World-recordedLetter displayedList)))
+       (text " " recordedWordsSize recordedWordColor)
+       (text (first (World-recordedLetter displayedList)) recordedWordsSize recordedWordColor))
+      0 (- 0 recordedWordsSize)
+      (recordedList->image (rest (World-recordedLetter displayedList)))
+      )
+     ]
+    ))
+
+(check-expect (recordedList->image (World-recordedLetter world1))
+    (cond
+    [(empty? (World-recordedLetter world1)) (text " " wordSize wordColor)]
+    [else
+     (overlay/align/offset
+      "center" "bottom"
+      (if
+       (empty? (first (World-recordedLetter world1)))
+       (text " " recordedWordsSize recordedWordColor)
+       (text (first (World-recordedLetter world1)) recordedWordsSize recordedWordColor))
+      0 (- 0 recordedWordsSize)
+      (recordedList->image (rest (World-recordedLetter world1)))
+      )
+     ]
+    ))
+
+(check-expect (recordedList->image (World-recordedLetter world2))
+    (cond
+    [(empty? (World-recordedLetter world2)) (text " " wordSize wordColor)]
+    [else
+     (overlay/align/offset
+      "center" "bottom"
+      (if
+       (empty? (first (World-recordedLetter world2)))
+       (text " " recordedWordsSize recordedWordColor)
+       (text (first (World-recordedLetter world2)) recordedWordsSize recordedWordColor))
+      0 (- 0 recordedWordsSize)
+      (recordedList->image (rest (World-recordedLetter world2)))
+      )
+     ]
+    )
+    )
+
+;; world-> image : x (world struture) -> image
+;; Creates the play screen
+(define (world->image x)
+  (cond
+    [(empty? (World-typedLetter x)) 
+     (overlay
+      (text " " wordSize wordColor)
+      (world-print x))]
+    [else 
+     (if (null? (first (World-typedLetter x)))
+         (world->image (traverse-world x))
+         (overlay/align/offset
+          "center" "top"
+          (text (lst->string (World-typedLetter x)) wordSize wordColor)
+          0 -300
+          (world-print x)))
+     ]
+    ) 
+  )
+
+;; Check-expect
+(check-expect (world->image displayedList)
+(cond
+    [(empty? (World-typedLetter displayedList)) 
+     (overlay
+      (text " " wordSize wordColor)
+      (world-print displayedList))]
+    [else 
+     (if (null? (first (World-typedLetter displayedList)))
+         (world->image (traverse-world displayedList))
+         (overlay/align/offset
+          "center" "top"
+          (text (lst->string (World-typedLetter displayedList)) wordSize wordColor)
+          0 -300
+          (world-print displayedList)))
+     ]
+    ))
+
+(check-expect (world->image world1)
+(cond
+    [(empty? (World-typedLetter world1)) 
+     (overlay
+      (text " " wordSize wordColor)
+      (world-print world1))]
+    [else 
+     (if (null? (first (World-typedLetter world1)))
+         (world->image (traverse-world world1))
+         (overlay/align/offset
+          "center" "top"
+          (text (lst->string (World-typedLetter world1)) wordSize wordColor)
+          0 -300
+          (world-print world1)))
+     ]
+    ))
+
+(check-expect (world->image world2)
+     (overlay
+      (text " " wordSize wordColor)
+      (world-print world2)))
+    
+
+;; contains-letter : letter [List-of String] -> Boolean
+;; Determines if the list has a given letter.
+(define (contains name alist)
+  (cond
+    [(empty? alist) #false]
+    [(empty? (first alist)) (contains name (rest alist))]
+    [(cons? alist)
+     (if (string=? (first alist) name)
+         #true
+         (contains name (rest alist)))]))
+
+;; Check-expect
+(check-expect (contains "e" (list "a" "b" "C")) #false)
+(check-expect (contains "a" (list "a" "b" "C")) #true)
+(check-expect (contains "e" (list '())) #false)
+
+;; key-pressed : World KeyEvent -> World
+;; checks what keys are pressed and returns the output if valid.
+(define (key-pressed x key)
+  (if (or (string=? (World-firstLetter x) key)
+          (string=? (World-secondLetter x) key)
+          (string=? (World-thirdLetter x) key) 
+          (string=? (World-fourthLetter x) key)
+          (string=? (World-fifthLetter x) key)
+          (string=? (World-sixthLetter x) key)
+          (string=? (World-seventhLetter x) key))
+      (change-world x (append (World-typedLetter x) (list key)))
+      (if (and (string=? "\r" key)(contains (World-firstLetter x) (World-typedLetter x)))
+          (record-world x (list '()) (append (World-recordedLetter x) (list (lst->string (World-typedLetter x)))))
+          x
+          )   
+      )
+  )
+
+;; Check-expect
+(check-expect (key-pressed displayedList "C") (make-World "C" "E" "T" "J" "I" "O" "N" (list '() "C") (list '())))
+(check-expect (key-pressed world1 "\r") (make-World "A" "B" "C" "D" "E" "F" "G" (list "C") (list "placeholder")))
+(check-expect (key-pressed world2 "C") world2)
+
+;; play : World -> World
+;;
+;; Uses big-bang to play a game of Spelling Bee, given Letters.
+(define (play w)
+  (big-bang
+      w
+    (to-draw world->image)
+    (on-key key-pressed)
+    ;; (display-mode 'fullscreen)
+    ))
