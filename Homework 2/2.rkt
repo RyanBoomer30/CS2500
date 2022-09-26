@@ -212,6 +212,8 @@
     )
  )
 
+(check-expect (more-inner-check "a" (list (list "a" "d" "c") (list "d" "b" "f") (list "d" "g" "o"))) "")
+(check-expect (more-inner-check "d" (list (list "a" "d" "c") (list "d" "b" "f") (list "d" "g" "o"))) "d")
 
 (define (inner-check first-lst lst)
   (cond
@@ -225,6 +227,9 @@
     )
 )
 
+(check-expect (inner-check (list "a" "b" "c") (list (list "a" "d" "c") (list "b" "e" "f") (list "l" "g" "o"))) "")
+(check-expect (inner-check (list "o" "b" "d") (list (list "a" "d" "c") (list "d" "b" "f") (list "d" "g" "o"))) "d")
+
 (define (intersection lst)
   (cond
     [(empty? lst) ""]
@@ -235,6 +240,10 @@
          )
      ]
   ))
+
+(check-expect (intersection (list (list "a" "b" "c") (list "d" "b" "f") (list "b" "g" "o"))) "b")
+(check-expect (intersection (list (list "a" "d" "c") (list "d" "b" "f") (list "b" "g" "o"))) "")
+(check-expect (intersection (list (list "a" "e" "c") (list "o" "a" "e") (list "e" "a" "o"))) "a")
 
 (define (earliest lst f)
   (cond
