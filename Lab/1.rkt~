@@ -1,0 +1,41 @@
+;; The first three lines of this file were inserted by DrRacket. They record metadata
+;; about the language level of this file in a form that our tools can easily process.
+#reader(lib "htdp-beginner-abbr-reader.ss" "lang")((modname |1|) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+;; A FIAS (Finite Increasing Arithmetic Seq) is
+;; (make-fias Number Number Positive)
+(deifne-struct fias [min max step])
+;; where (make-fias [min max step]) all represent numbers
+;; min + (k*max) where k is a natural number
+;; such that min + (k * step) < max
+
+;; fias-temp : FIAS -> ?
+(define (fias-temp fias)
+  (...
+   (... fias-min fias ...)
+   (... fias-max fias ...)
+   (... fias-step fias ...)
+   )
+)
+
+;; empty-fias : FIAS -> Boolean
+;; Test whether the FIAS is empty
+(define (empty-fias? fias)
+  (>= (fias-min fias) (fias-max fias))
+  )
+
+;; rest-fias : FIAS -> FIAS
+;; increase min value by 1
+(define (rest-fias fias)
+  (make-fias
+   (+ 1 (fias-min fias))
+   (fias-max fias)
+   (fias-step fias)
+   )
+  )
+
+(define (fias-temp fias)
+  (cond
+   ((empty-fias? fias) ...)
+   [else (... (fias-min fias) ... (fias-temp (rest-fias fias)) ...)]))
+   )
+)
