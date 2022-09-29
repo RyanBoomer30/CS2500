@@ -1,0 +1,36 @@
+;; The first three lines of this file were inserted by DrRacket. They record metadata
+;; about the language level of this file in a form that our tools can easily process.
+#reader(lib "htdp-intermediate-lambda-reader.ss" "lang")((modname |3|) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+(define-struct leaf [value])
+(define-struct node [left right])
+;; A [BinTree X] is one of:
+;; - (make-leaf X)
+;; - (make-node [BinTree X] [BinTree X])
+
+;; bintree-template : BinTree -> ?
+(define (bintree-template t)
+  (cond
+    [(leaf? t) (... (leaf-value t) ...)]
+    [(node? t)
+     (... (bintree-template (node-left t)) ...
+          (bintree-template (node-right t)) ...)]))
+
+;; three examples of [BinTree X]
+
+;; tree-add-all : Number [BinTree Number] -> [BinTree Numbers]
+;; (tree-add-all n tree) adds n to every value in tree
+(define (tree-add-all n tree)
+  (tree-modify s tree +))
+
+;; tree-append-all : String [BinTree String] -> [BinTree String]
+;; (tree-append-all s tree) adds s as a *suffix* to every string in the tree
+(define (tree-append-all s tree)
+  (tree-modify s tree string-append))
+
+(define (tree-modify x tree f)
+  (cond
+    [(leaf? tree) (make-leaf (f (leaf-value tree) x))]
+    [(node? tree)
+     (make-node (tree-modify x (node-left tree) f)
+                (tree-modify x (node-right tree) f))])
+)

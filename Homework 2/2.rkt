@@ -1,6 +1,6 @@
 ;; The first three lines of this file were inserted by DrRacket. They record metadata
 ;; about the language level of this file in a form that our tools can easily process.
-#reader(lib "htdp-intermediate-lambda-reader.ss" "lang")((modname HW-2-final) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+#reader(lib "htdp-intermediate-lambda-reader.ss" "lang")((modname |2|) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
 ;;;; Bouncing Ball
 
 (require 2htdp/image)
@@ -71,7 +71,7 @@
            [(empty? lst) '()]
            [(cons? lst)
             (new-balls-state (check-bounce lst (balls-state-width ball) (balls-state-height ball))
-                             ball)])))[
+                             ball)])))
                                        
 ;; check expects for check-border
 (check-expect (check-border (balls-state-initialize list-of-balls 500 500))
