@@ -90,7 +90,7 @@
       (if (empty? (group-members org)) ... ... ))]))
 
 ;; sub-group : Function OrgChart X Y -> (List-of OrgChart)
-;; recursive function that run a function through all the sub-elements of a tree
+;; recursive abstraction that run a function through all the sub-elements of a tree
 (define (sub-group f lst p1 p2)
   (cond
     [(empty? lst) '()]
@@ -103,6 +103,29 @@
                    (sub-group f (rest lst) p1 p2))
              (cons (f (first lst) p1 p2)
                    (sub-group f (rest lst) p1 p2))))]))
+
+(check-expect (sub-group full-title (group-members Cabinet) " Northeastern" "")
+              (list
+               (make-employee
+                "David Madigan"
+                "Academic Affairs Northeastern"
+                (list
+                 (make-group "Administration"
+                             (list (make-employee "Thomas Sheahan" "Curriculum & Programs Northeastern" '())))
+                 (make-group "Academic Deans"
+                             (list (make-employee "Alan Mislove" "Khoury Northeastern" '())
+                                   (make-employee "Carmen Sceppa" "Bouve Northeastern" '())
+                                   (make-employee "Uta Poiger" "Social Sciences & Humanities Northeastern" '())))))
+               (make-employee "Madeleine Estabrook" "Student Affairs Northeastern" '())
+               (make-employee "Karl Reid" "Chief Inclusion Officer Northeastern" '())))
+
+(check-expect (sub-group name-change (employee-direct-report David) "Administration" "Admin")
+              (list
+               (make-group "Admin" (list (make-employee "Thomas Sheahan" "Curriculum & Programs" '())))
+               (make-group "Academic Deans" (list (make-employee "Alan Mislove" "Khoury" '())
+                                                  (make-employee "Carmen Sceppa" "Bouve" '())
+                                                  (make-employee "Uta Poiger" "Social Sciences & Humanities" '()))))
+              )
 
 ;; full-title : OrgChart String -> OrgChart
 ;; adds the “(organization name)” to the title for each person in the OrgChart
@@ -222,12 +245,12 @@
 (check-expect (all-departments David) (list "Administration" "Academic Deans"))
 (check-expect (all-departments Alan) '())
 
-;; abstraction-2 : OrgChart String Operation Variable Variable
+;; abstraction-2 : OrgChart String Operation Variable Variable -> Number or [List-of String]
 (define (abstraction-2 org dept op v1 v2)
   (local [;; org-recurssion : OrgChart -> Function
           ;; Run the input function on an OrgChart
-          (define (org-recurssion department acc) 
-            (op (abstraction-2 department dept op v1 v2) acc)
+          (define (org-recurssion orgchart acc) 
+            (op (abstraction-2 orgchart dept op v1 v2) acc)
             )]
     (cond
       [(group? org) (foldr org-recurssion (if (empty? v1) (list (group-group-name org))

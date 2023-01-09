@@ -1,0 +1,156 @@
+;; The first three lines of this file were inserted by DrRacket. They record metadata
+;; about the language level of this file in a form that our tools can easily process.
+#reader(lib "htdp-intermediate-lambda-reader.ss" "lang")((modname CS2500_HW9_with_hash_tables) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+(require "./hashtable-extras.rkt")
+
+;; PART 1 =====
+
+;; An ELGraph is a [Hash-Table-of String Edge]
+;; An ELGraph maps a node (i.e. the label on the node) to a list of edges coming out of that node.
+
+(define-struct edge [label tail])
+;; An Edge is a (make-edge String String)
+;; A (make-edge label tail) represents an edge with a specific label and the label of its tail node.
+
+(define EX-GRAPH-0 (make-hash (list (list "A" empty))))
+
+(define EX-GRAPH-1
+  (make-hash
+   (list
+    (list "A" (list (make-edge "A-B" "B") (make-edge "A-C" "C")))
+    (list "B" (list (make-edge "B-A" "A")))
+    (list "C" empty))))
+
+(define EX-GRAPH-2
+  (make-hash
+   (list
+    (list "A" (list (make-edge "A-B" "B")))
+    (list "B" (list (make-edge "B-C" "C")))
+    (list "C" (list (make-edge "C-A" "A"))))))
+
+;; PART 2 =====
+
+(define given-street-graph
+  (make-hash
+   (list
+    (list "Gainsborough and St Stephen"
+          (list
+           (make-edge "west" "Opera and St Stephen")
+           (make-edge "north" "Hemenway and Gainsborough")))
+    (list "Opera and St Stephen"
+          (list
+           (make-edge "south" "Huntington and Opera")))
+    (list "Hemenway and Gainsborough"
+          (list
+           (make-edge "west" "Hemenway and Forsyth St")))
+    (list "Huntington and Opera"
+          (list
+           (make-edge "west" "Huntington and Forsyth St")))
+    (list "Hemenway and Forsyth St"
+          (list
+           (make-edge "west" "Hemenway and Forsyth Way")
+           (make-edge "east" "Hemenway and Gainsborough")
+           (make-edge "south" "Huntington and Forsyth St")))
+    (list "Huntington and Forsyth St"
+          (list
+           (make-edge "north" "Hemenway and Forsyth St")
+           (make-edge "east" "Huntington and Opera")
+           (make-edge "west" "Huntington and Forsyth Way")))
+    (list "Hemenway and Forsyth Way"
+          (list
+           (make-edge "south" "Huntington and Forsyth Way")
+           (make-edge "east" "Hemenway and Forsyth St")))
+    (list "Huntington and Forsyth Way"
+          (list
+           (make-edge "north" "Hemenway and Forsyth Way")
+           (make-edge "east" "Huntington and Forsyth St"))))))
+
+(define my-street-graph
+  (make-hash
+   (list
+    (list "Tremont and Cyprians"
+          (list
+           (make-edge "north" "Columbus and Cyprians")
+           (make-edge "east" "Tremont and Cunard")))
+    (list "Columbus and Cyprians"
+          (list
+           (make-edge "east" "Columbus and Cunard")))
+    (list "Tremont and Cunard"
+          (list
+           (make-edge "west" "Tremont and Cyprians")
+           (make-edge "east" "Tremont and Coventry")))
+    (list "Columbus and Cunard"
+          (list
+           (make-edge "south" "Tremont and Cunard")
+           (make-edge "west" "Columbus and Cyprians")
+           (make-edge "east" "Columbus and Coventry")))
+    (list "Tremont and Conventry"
+          (list
+           (make-edge "west" "Tremont and Cunard")
+           (make-edge "north" "Columbus and Coventry")))
+    (list "Columbus and Coventry"
+          (list
+           (make-edge "west" "Columbus and Cunard"))))))
+
+;; Part 3 =====
+;; driving-directions: ELGraph String String -> [List-of String]
+;; driving-directions consumes
+;; (1) a graph of streets and directions (e.g., from the previous exercise),
+;; (2) the starting point, which is an intersection,
+;; (3) the destination, which is another intersection
+;; and returns a list of directions from the starting point to the destination.
+(define (driving-directions graph start end)
+  (local
+    (;; remove-from-list String [List-of String] -> [List-of String]
+     [define (remove-from-list e l)
+       (filter (lambda (x) (not (equal? e x))) l)]
+     ;; modified-dfs [List-of String] [List-of String] [List-of String] [List-of Edge] -> [List-of Edge]
+     [define (modified-dfs not-seen in-progress visited edge-list)
+       (if (empty? in-progress)
+           empty
+           (local
+             ([define curr-node (first in-progress)]
+              [define valid-neighbors
+                (filter (lambda (x) (member? (edge-tail x) not-seen)) (hash-ref graph curr-node))])
+             (cond
+               [(equal? curr-node end) edge-list]
+               [(empty? valid-neighbors)
+                (modified-dfs not-seen (rest in-progress) (cons curr-node visited) edge-list)]
+               [else
+                (local
+                  ([define neighbor (edge-tail (first valid-neighbors))])
+                  (modified-dfs
+                   (remove-from-list neighbor not-seen)
+                   (cons neighbor in-progress)
+                   visited
+                   (cons (first valid-neighbors) edge-list)))])))])
+    (map
+     (lambda (x) (string-append "Head " (edge-label x) " to " (edge-tail x) "."))
+     (reverse (modified-dfs (remove-from-list start (hash-keys graph)) (list start) empty empty)))))
+
+(driving-directions given-street-graph "Huntington and Forsyth Way" "Huntington and Forsyth St")
+
+(driving-directions given-street-graph "Huntington and Forsyth Way" "Hemenway and Gainsborough")
+
+(driving-directions given-street-graph "Gainsborough and St Stephen" "Huntington and Forsyth Way")
+
+(check-expect
+ (driving-directions given-street-graph
+                     "Huntington and Forsyth Way" 
+                     "Gainsborough and St Stephen")
+ empty)
+
+;; fully-connected? : ELGraph -> Boolean
+(define (fully-connected? graph)
+  (local [(define (connected? graph-keys list-length)
+            (cond
+              [(= list-length 0) #t]
+              [else
+                (if (andmap (lambda (x) (< 0 (length x)))
+                             (map (lambda (point1 point2)
+                                    (driving-directions graph point1 point2)) graph-keys (hash-keys graph)))
+                    (connected? (append (rest graph-keys) (list (first graph-keys))) (- list-length 1))
+                    #f
+                    )]))]
+    (connected? (append (rest (hash-keys graph)) (list (first (hash-keys graph))))
+                (- (length (hash-keys given-street-graph)) 1))))
